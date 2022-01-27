@@ -24,7 +24,7 @@
         [Parameter()]
         [string]$Body,
 
-        # Credential should contain code in password, username is not used
+        # Credential should contain access token in password, username is not used, it is expected to be saved
         [Parameter()]
         [pscredential]
         [System.Management.Automation.CredentialAttribute()]

@@ -13,17 +13,16 @@
     #>
     [CmdletBinding()]
     Param (
+        # Authorization code obtained after running Get-GAPIOAuthCode (read help)
+        [Parameter(Mandatory)]
+        [string]
+        $Code,
+
         # Credential should contain client_id in username and client secred in password
         [Parameter()]
         [pscredential]
         [System.Management.Automation.CredentialAttribute()]
         $ClientCredential = (Import-Credential -FileName client.cred),
-
-        # Credential should contain code in password, username is not used
-        [Parameter(Mandatory)]
-        [pscredential]
-        [System.Management.Automation.CredentialAttribute()]
-        $CodeCredential,
 
         # Call back URI specified in the Project
         [Parameter()]
@@ -39,7 +38,7 @@
     )
 
     $body = @{
-        code = $CodeCredential.GetNetworkCredential().Password
+        code = $Code
         client_id = $ClientCredential.UserName
         client_secret = $ClientCredential.GetNetworkCredential().Password
         redirect_uri = $RedirectUri

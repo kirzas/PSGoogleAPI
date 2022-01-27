@@ -6,16 +6,21 @@
         Credentials must be precreated on https://console.cloud.google.com/apis/credentials page.
         ClientId is client_id field
         RedirectUri is redirect_uri field
-        Scope of the toke, it must be allowed in the project.
+        Scope of the token, it must be allowed in the project.
     .EXAMPLE
-        Get-GOAuthCode -Credential $cred
-        Starts default browser on a page to authorize the application.
+        Get-GOAuthCode
+        if you saved client id and client secret already, it will not prompt for any input and start default browser to request your consent to access your Google account.
+    .EXAMPLE
+        Get-GOAuthCode -ClientCredential (New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList '<real client id>', (ConvertTo-SecureString -String "<real client secret>" -AsPlainText -Force))
+        Starts default browser to request your consent to access your Google account.
     #>
     [CmdletBinding()]
     Param (
-        # Client Id of the API credential
-        [Parameter(Mandatory)]
-        [string]$ClientId,
+        # Credential should contain client_id in username, password will not be used in this function; it is requested as credential object for consistency
+        [Parameter()]
+        [pscredential]
+        [System.Management.Automation.CredentialAttribute()]
+        $ClientCredential = (Import-Credential -FileName client.cred),
 
         # Call back URI specified in the Project
         [Parameter()]
@@ -31,7 +36,7 @@
     )
     
     $body = @{
-        client_id = $ClientId
+        client_id = $ClientCredential.UserName
         scope = $Scope
         response_type = 'code'
         redirect_uri = $RedirectUri
