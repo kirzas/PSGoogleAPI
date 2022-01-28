@@ -1,49 +1,41 @@
-Function Connect-GAPI {
+﻿Function Invoke-GAPIOAuthTokenRefresh {
     <#
     .SYNOPSIS
-        Function to get OAuth tokens for Google API.
+        Function to refresh OAuth tokens for Google API.
     .DESCRIPTION
-        
+        The fundtion starts the default browser on a page to authorize the application.
+        After the authorization is complete, it will open URI with callback set in your project.
+        URI contains the authorization code. Copy it before closing the browser.
     .EXAMPLE
-        Get-GOAuthToken -Credential $cred
+        Invoke-GAPIOAuthTokenRefresh -Credential $cred
         Starts default browser on a page to authorize the application.
     #>
     [CmdletBinding()]
     Param (
         # Credential should contain client_id in username and client secred in password
-        [Parameter(Mandatory)]
+        [Parameter()]
         [pscredential]
         [System.Management.Automation.CredentialAttribute()]
         $ClientCredential = (Import-Credential -FileName client.cred),
 
-        # Credential should contain code in password, username is not used
-        [Parameter(Mandatory)]
+        # Credential should contain refresh token in password, username is not used
+        [Parameter()]
         [pscredential]
         [System.Management.Automation.CredentialAttribute()]
-        $CodeCredential,
-
-        # Call back URI specified in the Project
-        [Parameter()]
-        [string]$RedirectUri = 'http://localhost',
-
-        # Scope of the token that will be requested with the code
-        [Parameter()]
-        [uri]$Scope = 'https://www.googleapis.com/auth/calendar',
+        $RefreshToken = (Import-Credential -FileName refresh_token.cred),
 
         # URI to get code
         [Parameter()]
         [uri]$UriBase = 'https://www.googleapis.com/oauth2/v4/token'
     )
-
-    $body = @{
-        code = $CodeCredential.GetNetworkCredential().Password
-        client_id = $ClientCredential.UserName
-        client_secret = $ClientCredential.GetNetworkCredential().Password
-        redirect_uri = $RedirectUri
-        grant_type = 'authorization_code'
-    }
-    
     try {
+        $body = @{
+            client_id = $ClientCredential.UserName
+            client_secret = $ClientCredential.GetNetworkCredential().Password
+            refresh_token = $RefreshToken.GetNetworkCredential().Password
+            grant_type = 'refresh_token'
+        }
+
         $uriResource = ''
         foreach ($key in $body.Keys) {
             $uriResource = Join-Uri -UriBase $uriResource -Resource "$($key)=$($body[$key])" -Delimiter '&'
