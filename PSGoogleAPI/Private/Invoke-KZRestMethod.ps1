@@ -152,9 +152,13 @@
         $output
     } catch {
         if ($_.Exception.Response) {
-            $errorInResponse = [IO.StreamReader]::new(
-                $_.Exception.Response.GetResponseStream()
-            ).ReadToEnd()
+            if ($PSVersionTable.PSVersion.Major -lt 7) {
+                $errorInResponse = [IO.StreamReader]::new(
+                    $_.Exception.Response.GetResponseStream()
+                ).ReadToEnd()
+            } else {
+                $errorInResponse = $_.Exception.Response
+            }
         }
 
         if ($errorInResponse) {
