@@ -58,7 +58,7 @@ Function New-GAPICalendarEvent {
         [datetime]$End,
 
         # Description of the event
-        [Parameter(Mandatory)]
+        [Parameter()]
         [string]$Description,
         
         # Title of the event
