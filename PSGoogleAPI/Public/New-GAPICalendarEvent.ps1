@@ -8,13 +8,13 @@ Function New-GAPICalendarEvent {
             - Start time and Duration as timespan
             - Start and End times
     .EXAMPLE
-        New-GAPICalendarEvent -CalendarId $tabithaCalendarId -Summary 'TestSummary' -Description 'TestDescription' -AllDay -Start '2022.02.14' -NumberOfDays 1 -Verbose
+        New-GAPICalendarEvent -CalendarId 2gj741jcpc26lpfh2773gbh3ns -Summary 'TestSummary' -Description 'TestDescription' -AllDay -Start '2022.02.14' -NumberOfDays 1 -Verbose
         Create an event for all day with duration of 1 day
     .EXAMPLE
-        New-GAPICalendarEvent -CalendarId $tabithaCalendarId -Summary 'TestSummary15min' -Description 'TestDescription15min' -Start '2022.02.15 14:30' -Duration '00:00:15:00' -Verbose
+        New-GAPICalendarEvent -CalendarId 2gj741jcpc26lpfh2773gbh3ns -Summary 'TestSummary15min' -Description 'TestDescription15min' -Start '2022.02.15 14:30' -Duration '00:00:15:00' -Verbose
         Create an event starting at 2022.02.15 14:30 with duration of 15 minutes
     .EXAMPLE
-        New-GAPICalendarEvent -CalendarId $tabithaCalendarId -Summary 'TestSummary' -Description 'TestDescription' -Start '2022.02.14 16:30' -End '2022.02.14 18:30' -Verbose
+        New-GAPICalendarEvent -CalendarId 2gj741jcpc26lpfh2773gbh3ns -Summary 'TestSummary' -Description 'TestDescription' -Start '2022.02.14 16:30' -End '2022.02.14 18:30' -Verbose
         Create an event starting at 2022.02.14 16:30 and ends at 2022.02.14 18:30
     #>
     [CmdletBinding(
@@ -80,17 +80,17 @@ Function New-GAPICalendarEvent {
     $calendarUri = Join-Uri -UriBase $UriBase -Resource $CalendarId -ErrorAction Stop
     $fullUri = Join-Uri -UriBase $calendarUri -Resource "events" -ErrorAction Stop
 
-    $startUtc = $Start.ToUniversalTime()
     switch ($PSCmdlet.ParameterSetName) {
         'AllDay' {
             $startInBody = @{
-                date = $startUtc.ToString('yyyy-MM-dd')
+                date = $Start.ToString('yyyy-MM-dd')
             }
             $endInBody = @{
-                date = $startUtc.AddDays($NumberOfDays - 1).ToString('yyyy-MM-dd')
+                date = $Start.AddDays($NumberOfDays - 1).ToString('yyyy-MM-dd')
             }
         }
         'Duration' {
+            $startUtc = $Start.ToUniversalTime()
             $startInBody = @{
                 dateTime = [Xml.XmlConvert]::ToString($startUtc,[Xml.XmlDateTimeSerializationMode]::Utc)
             }
@@ -99,6 +99,7 @@ Function New-GAPICalendarEvent {
             }
         }
         'End' {
+            $startUtc = $Start.ToUniversalTime()
             $startInBody = @{
                 dateTime = [Xml.XmlConvert]::ToString($startUtc,[Xml.XmlDateTimeSerializationMode]::Utc)
             }

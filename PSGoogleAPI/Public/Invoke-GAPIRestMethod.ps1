@@ -47,6 +47,7 @@
     }
 
     try {
+        Write-Verbose -Message ($irmSplat | Out-String)
         $restCallOutput = Invoke-KZRestMethod @irmSplat
         if ($ValueOnly) {
             $restCallOutput.Value

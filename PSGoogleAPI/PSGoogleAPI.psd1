@@ -12,7 +12,7 @@
 RootModule = '.\PSGoogleAPI.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.1'
+ModuleVersion = '0.0.2'
 
 # ID used to uniquely identify this module
 GUID = '6c493d2d-5c21-49bc-b94b-8ea006db691b'
@@ -44,6 +44,7 @@ FunctionsToExport = @(
     'Invoke-GAPIOAuthTokenRefresh'
     'Invoke-GAPIRestMethod'
     'New-GAPICalendarEvent'
+    'Remove-GAPICalendarEvent'
     'Save-GAPIAccessToken'
     'Save-GAPIClientCredential'
     'Save-GAPIRefreshToken'

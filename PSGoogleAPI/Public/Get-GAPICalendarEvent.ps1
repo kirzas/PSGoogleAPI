@@ -36,5 +36,5 @@
     $calendarUri = Join-Uri -UriBase $UriBase -Resource $CalendarId -ErrorAction Stop
     $fullUri = Join-Uri -UriBase $calendarUri -Resource "events/$EventId" -ErrorAction Stop
 
-    Invoke-GAPIRestMethod -Uri $fullUri -Method Get -AccessToken $AccessToken -ErrorAction Stop
+    Invoke-GAPIRestMethod -Uri $fullUri -Method Get -AccessToken $AccessToken -ErrorAction Stop | Select-Object -ExpandProperty Items
 }
